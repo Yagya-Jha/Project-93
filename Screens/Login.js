@@ -3,6 +3,7 @@ import * as React from 'react';
 import {Text, TouchableOpacity, Image, View, TextInput, Alert, StyleSheet} from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import * as Font from 'expo-font';
+import firebase from 'firebase';
 
 let custom_font = {'customfont':require('../assets/customFont/WhaleITriedRegular.ttf')}
 
@@ -11,7 +12,7 @@ export default class Form extends React.Component{
         super();
         this.state = {
             fontLoaded: false,
-            username: '',
+            emailID: '',
             password: '',
         };
     }
@@ -25,9 +26,16 @@ export default class Form extends React.Component{
         this.loadFonts();
     }
 
-    checkuser = async()=>{
-        let username = this.state.username;
-        let password = this.state.password;
+    userSignup = (email, password)=>{
+        firebase.auth().createUserWithEmailAndPassword(email, password).then((resopnse)=>{ this.props.navigation.navigate('FormScreen') }).catch(function (error){
+            return(Alert.alert(error.message))
+        })
+    }
+
+    userSignIn(email, password){
+        firebase.auth().signInWithEmailAndPassword(email, password).then((resopnse)=>{ this.props.navigation.navigate('Dashboard') }).catch(function (error){
+            return(Alert.alert(error.message))
+        })
     }
 
     render(){
@@ -40,9 +48,9 @@ export default class Form extends React.Component{
                     <Text style = {styles.appTitleText}>App Name</Text>
                     <View style = {styles.inputContainer}>
                         <Text style = {styles.inputText}>
-                            Username: 
+                            emailID: 
                         </Text>
-                        <TextInput style = {styles.textInputStyle} placeholder = 'Username' onChangeText = {(text)=>{this.setState({username: text})}}></TextInput>
+                        <TextInput style = {styles.textInputStyle} placeholder = 'emailID' keyboardType = {'email-address'} onChangeText = {(text)=>{this.setState({emailID: text})}}></TextInput>
                     </View>
                     <View style = {styles.inputContainer}>
                         <Text style = {styles.inputText}>
@@ -51,7 +59,7 @@ export default class Form extends React.Component{
                         <TextInput style = {styles.textInputStyle} placeholder = 'Password' maxLength = {10} secureTextEntry = {true} onChangeText = {(text)=>{this.setState({password: text})}}></TextInput>
                     </View>
                     <View>
-                        <TouchableOpacity style = {styles.submitButton} onPress = {()=>this.props.navigation.navigate('Dashboard')}>
+                        <TouchableOpacity style = {styles.submitButton} onPress = {()=>this.userSignIn(this.state.emailID, this.state.password)}>
                             <Text style = {styles.inputText}>
                                 Login
                             </Text>
@@ -59,7 +67,7 @@ export default class Form extends React.Component{
                     </View>
                     <View style = {styles.inputContainer}>
                         <Text style = {styles.inputText}>New User?</Text>
-                        <TouchableOpacity style = {styles.signUp} onPress = {()=>this.props.navigation.navigate("FormScreen")} ><Text style = {styles.inputText}>SignUp</Text></TouchableOpacity>
+                        <TouchableOpacity style = {styles.signUp} onPress = {()=>this.userSignup(this.state.emailID, this.state.password)} ><Text style = {styles.inputText}>SignUp</Text></TouchableOpacity>
                     </View>
                 </View>
             );
@@ -74,7 +82,10 @@ const styles = StyleSheet.create({
         alignItems:"center",
         justifyContent:"center",
     },
-    signUp: {},
+    signUp: {
+        backgroundColor: 'white',
+
+    },
     inputContainer: {
         marginTop: 20,
         marginBottom: 20,
