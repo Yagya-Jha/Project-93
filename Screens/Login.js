@@ -27,13 +27,13 @@ export default class Form extends React.Component{
     }
 
     userSignup = (email, password)=>{
-        firebase.auth().createUserWithEmailAndPassword(email, password).then((resopnse)=>{ this.props.navigation.navigate('FormScreen') }).catch(function (error){
+        firebase.auth().createUserWithEmailAndPassword(email, password).then((resopnse)=>{ return Alert.alert('User Added Successfully') }).catch(function (error){
             return(Alert.alert(error.message))
         })
     }
 
     userSignIn(email, password){
-        firebase.auth().signInWithEmailAndPassword(email, password).then((resopnse)=>{ this.props.navigation.navigate('Dashboard') }).catch(function (error){
+        firebase.auth().signInWithEmailAndPassword(email, password).then((resopnse)=>{ return Alert.alert('User Signed In Successfully') }).catch(function (error){
             return(Alert.alert(error.message))
         })
     }
